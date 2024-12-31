@@ -3,7 +3,7 @@
 @{
     var homePage = Umbraco.AssignedContentItem.AncestorOrSelf<HomePage>();
     @* var childeren = homePage?.Children?.Where(x => x.IsVisible()) ?? Enumerable.Empty<IPublishedContent>(); *@
-    var childeren = homePage.MainNavigation;
+    var navigationItems = homePage.MainNavigation;
 }
 
 <!-- Navigation-->
@@ -28,14 +28,41 @@
                     }
                 } *@
 
-                @if (childeren.Any() && childeren != null)
+                @* @if (navigationItems.Any() && navigationItems != null)
                 {
-                    foreach (var item in childeren)
+                    foreach (var item in navigationItems)
                     {
                         <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="@item.Url" target="@item.Target">@item.Name</a></li>
                     }
-                }
+                } *@
 
+                @if(navigationItems != null && navigationItems.Any())
+                {
+                    var dropdownId = 0;
+                    foreach(var item in navigationItems)
+                    {
+                        var hasChildLinks = item.ChildLinks != null && item.ChildLinks.Any();
+                        if(hasChildLinks)
+                        {
+                            <li class="nav-item dropdown">
+                                <a class="nav-link px-lg-3 py-3 py-lg-4 dropdown-toggle" href="https://google.com" id="navbarDropdown@(dropdownId)" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    @item.Title
+                                </a>
+                                <ul class="dropdown-menu border-0" aria-labelledby="navbarDropdown@(dropdownId)">
+                                    @foreach(var childLink in item.ChildLinks)
+                                    {
+                                        <li><a class="dropdown-item" href="@childLink.Url" target="@childLink.Target">@childLink.Name</a></li>
+                                    }
+                                </ul>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="@item.Link.Url" target="@item.Link.Target">@item.Title</a></li>    
+                        }
+                        dropdownId++;
+                    }
+                }
             </ul>
         </div>
     </div>
