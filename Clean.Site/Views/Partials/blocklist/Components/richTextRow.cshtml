@@ -2,6 +2,12 @@
 
 @{
     var row = (RichTextRow)Model.Content;
+    var settings = (RichTextRowSettings)Model.Settings;
+    if (settings?.Hide ?? false)
+    {
+        return;
+    }
+    
 }
 
 <div class="row gx-4 gx-lg-5 justify-content-center">
